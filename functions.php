@@ -28,6 +28,14 @@ function display_flash_message($name) {
          unset($_SESSION[$name]);
     }
 };
+
+function display_flash_success($profile) {
+   // Профиль успешно обновлен.
+    if (isset($_SESSION[$profile])) {
+        echo $_SESSION[$profile];
+        unset($_SESSION[$profile]);
+    }
+};
 function set_flash_message($name, $message) {
     $_SESSION[$name] = $message;
 };
@@ -58,10 +66,17 @@ function auth($email, $password) {
 }; // authorization function
 
 function status($stat) { // Вывод статуса пользователя
-
     if ($stat == 'online') $status = "success"; // онлайн
     if ($stat == 'busy') $status = "warning"; // занят
     if ($stat == 'offline') $status = "danger"; // отошёл
     return $status;
+}
+
+function get_list_users() {
+    $sql = "SELECT * FROM users JOIN info ON (info.User_id = users.Id) JOIN media ON (media.Media_id = users.Id)";
+    global $pdo;
+    $statement = $pdo->prepare($sql);
+    $statement->execute();
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>

@@ -3,7 +3,7 @@ session_start();
 $user = $_SESSION["user"];
 require_once ('functions.php');
 if (isset($_SESSION["user"])) {
-     // echo "Вы авторизованы как " . $user['Role'];
+    echo "Вы авторизованы как {$user['Role']}";
 } else {
     header("Location: /page_login.php");
     exit;
@@ -47,7 +47,7 @@ if (isset($_SESSION["user"])) {
 
         <main id="js-page-content" role="main" class="page-content mt-3">
             <div class="alert alert-success">
-                Профиль успешно обновлен.
+                <?php display_flash_success("profile"); ?>
             </div>
             <div class="subheader">
                 <h1 class="subheader-title">
@@ -73,16 +73,11 @@ if (isset($_SESSION["user"])) {
                 </div>
             </div>
             <div class="row" id="js-contacts">
-              <!--   -->
-              <?php
-              $sql = "SELECT * FROM users JOIN info ON (info.User_id = users.Id) JOIN media ON (media.Media_id = users.Id)";
-              global $pdo;
-              $stmt = $pdo->prepare($sql);
-              $stmt->execute();
-
-               while($data=$stmt->fetch(PDO::FETCH_ASSOC)){ ?>
+                <!--  get_list_users() получение списка пользователей -->
+                <?php $users = get_list_users();
+                foreach($users as $data) { ?>
                 <div class="col-xl-4">
-                    <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="<?php $user['Name']; ?>">
+                    <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="<?php $data['Name']; ?>">
                         <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
                             <div class="d-flex flex-row align-items-center">
                                 <!-- function status() Проверяем текущий статус пользователя и выводим его -->
@@ -129,7 +124,7 @@ if (isset($_SESSION["user"])) {
                         </div>
                         <div class="card-body p-0 collapse show">
                             <div class="p-3">
-                                <a href="tel:+13174562564" class="mt-1 d-block fs-sm fw-400 text-dark">
+                                <a href="<?php echo $data['Phone']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
                                     <i class="fas fa-mobile-alt text-muted mr-2"></i><?php echo $data['Phone']; ?></a>
                                 <a href="<?php echo $data['Email']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
                                     <i class="fas fa-mouse-pointer text-muted mr-2"></i><?php echo $data['Email']; ?></a>
@@ -150,7 +145,7 @@ if (isset($_SESSION["user"])) {
                         </div>
                     </div>
                 </div><!-- end col-xl-4 -->
-              <?php } ?>
+              <?php } ?><!-- end foreach -->
             </div>
         </main>
 
