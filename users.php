@@ -3,7 +3,7 @@ session_start();
 $user = $_SESSION["user"];
 require_once ('functions.php');
 if (isset($_SESSION["user"])) {
-    echo "Вы авторизованы как {$user['Role']}";
+    echo "Вы авторизованы как {$user['role']}";
 } else {
     header("Location: /page_login.php");
     exit;
@@ -56,8 +56,8 @@ if (isset($_SESSION["user"])) {
             </div>
             <div class="row">
                 <div class="col-xl-12">
-                  <?php if($user['Role'] == "admin"): ?>
-                    <a class="btn btn-success" href="create_user.html">Добавить</a>
+                  <?php if($user['role'] == "admin"): ?>
+                    <a class="btn btn-success" href="create_user.php">Добавить</a>
                   <?php endif; ?>
                     <div class="border-faded bg-faded p-3 mb-g d-flex mt-3">
                         <input type="text" id="js-filter-contacts" name="filter-contacts" class="form-control shadow-inset-2 form-control-lg" placeholder="Найти пользователя">
@@ -77,44 +77,44 @@ if (isset($_SESSION["user"])) {
                 <?php $users = get_list_users();
                 foreach($users as $data) { ?>
                 <div class="col-xl-4">
-                    <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="<?php $data['Name']; ?>">
+                    <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="<?php echo $data['name']; ?>">
                         <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
                             <div class="d-flex flex-row align-items-center">
                                 <!-- function status() Проверяем текущий статус пользователя и выводим его -->
-                                <span class="status status-<?php echo status($data['Status']) . " ";?> mr-3">
-                                    <span class="rounded-circle profile-image d-block " style="background-image:url('img/demo/avatars/<?php echo $data['Avatar']; ?>'); background-size: cover;"></span>
+                                <span class="status status-<?php echo get_status($data['status']) . " ";?> mr-3">
+                                    <span class="rounded-circle profile-image d-block " style="background-image:url('img/demo/avatars/<?php echo $data['avatar']; ?>'); background-size: cover;"></span>
                                 </span>
                                 <div class="info-card-text flex-1">
                                     <a href="javascript:void(0);" class="fs-xl text-truncate text-truncate-lg text-info" data-toggle="dropdown" aria-expanded="false">
-                                        <?php echo $data['Name']; ?>
+                                        <?php echo $data['name']; ?>
 
                                         <i class="fal fas fa-cog fa-fw d-inline-block ml-1 fs-md"></i>
 
                                         <i class="fal fa-angle-down d-inline-block ml-1 fs-md"></i>
                                     </a>
                                     <!-- Выводим меню правок для админа или только одно меню для авторизованного пользователя -->
-                                    <?php if(($user['Role'] == "admin") or ($user['Id'] == $data['Id'])): ?>
+                                    <?php if(($user['role'] == "admin") or ($user['id'] == $data['id'])): ?>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="edit?id=<?php echo $data['Id']; ?>">
+                                        <a class="dropdown-item" href="edit?id=<?php echo $data['id']; ?>">
                                             <i class="fa fa-edit"></i>
                                         Редактировать</a>
-                                        <a class="dropdown-item" href="security?id=<?php echo $data['Id']; ?>">
+                                        <a class="dropdown-item" href="security?id=<?php echo $data['id']; ?>">
                                             <i class="fa fa-lock"></i>
                                         Безопасность</a>
-                                        <a class="dropdown-item" href="status?id=<?php echo $data['Id']; ?>">
+                                        <a class="dropdown-item" href="status?id=<?php echo $data['id']; ?>">
                                             <i class="fa fa-sun"></i>
                                         Установить статус</a>
-                                        <a class="dropdown-item" href="media?id=<?php echo $data['Id']; ?>">
+                                        <a class="dropdown-item" href="media?id=<?php echo $data['id']; ?>">
                                             <i class="fa fa-camera"></i>
                                             Загрузить аватар
                                         </a>
-                                        <a href="delete?id=<?php echo $data['Id']; ?>" class="dropdown-item" onclick="return confirm('are you sure?');">
+                                        <a href="delete?id=<?php echo $data['id']; ?>" class="dropdown-item" onclick="return confirm('are you sure?');">
                                             <i class="fa fa-window-close"></i>
                                             Удалить
                                         </a>
                                     </div>
                                     <?php endif; ?>
-                                    <span class="text-truncate text-truncate-xl"><?php echo $data['Workplace']; ?></span>
+                                    <span class="text-truncate text-truncate-xl"><?php echo $data['workplace']; ?></span>
                                 </div>
                                 <button class="js-expand-btn btn btn-sm btn-default d-none" data-toggle="collapse" data-target="#c_1 > .card-body + .card-body" aria-expanded="false">
                                     <span class="collapsed-hidden">+</span>
@@ -124,20 +124,20 @@ if (isset($_SESSION["user"])) {
                         </div>
                         <div class="card-body p-0 collapse show">
                             <div class="p-3">
-                                <a href="<?php echo $data['Phone']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                    <i class="fas fa-mobile-alt text-muted mr-2"></i><?php echo $data['Phone']; ?></a>
-                                <a href="<?php echo $data['Email']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                    <i class="fas fa-mouse-pointer text-muted mr-2"></i><?php echo $data['Email']; ?></a>
+                                <a href="<?php echo $data['phone']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
+                                    <i class="fas fa-mobile-alt text-muted mr-2"></i><?php echo $data['phone']; ?></a>
+                                <a href="<?php echo $data['email']; ?>" class="mt-1 d-block fs-sm fw-400 text-dark">
+                                    <i class="fas fa-mouse-pointer text-muted mr-2"></i><?php echo $data['email']; ?></a>
                                 <address class="fs-sm fw-400 mt-4 text-muted">
-                                    <i class="fas fa-map-pin mr-2"></i><?php echo $data['Address']; ?></address>
+                                    <i class="fas fa-map-pin mr-2"></i><?php echo $data['address']; ?></address>
                                 <div class="d-flex flex-row">
-                                    <a href="<?php echo $data['Vk']; ?>" class="mr-2 fs-xxl" style="color:#4680C2">
+                                    <a href="<?php echo $data['vk']; ?>" class="mr-2 fs-xxl" style="color:#4680C2">
                                         <i class="fab fa-vk"></i>
                                     </a>
-                                    <a href="<?php echo $data['Telegram']; ?>" class="mr-2 fs-xxl" style="color:#38A1F3">
+                                    <a href="<?php echo $data['telegram']; ?>" class="mr-2 fs-xxl" style="color:#38A1F3">
                                         <i class="fab fa-telegram"></i>
                                     </a>
-                                    <a href="<?php echo $data['Insta']; ?>" class="mr-2 fs-xxl" style="color:#E1306C">
+                                    <a href="<?php echo $data['insta']; ?>" class="mr-2 fs-xxl" style="color:#E1306C">
                                         <i class="fab fa-instagram"></i>
                                     </a>
                                 </div>
