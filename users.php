@@ -96,7 +96,7 @@ if (isset($_SESSION["user"])) {
                                     </a>
                                     <!-- Выводим меню правок у всех для админа или только меню для авторизованного пользователя -->
                                     <?php if(($user['role'] == "admin") or ($user['id'] == $data['user_id'])) { ?>
-                                            <?php echo "<h4>" . $data['user_id'] . "</h4>" ?>
+
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="edit.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-edit"></i>
