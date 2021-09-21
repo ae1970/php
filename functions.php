@@ -1,9 +1,33 @@
 <?php
 session_start();
+
 try {
     $pdo = new PDO('mysql:host=localhost;dbname=myproject', 'root', 'root');
 } catch (PDOException $e) {
     print_r($e);
+}
+
+function get_user_role($id)
+{
+    // нахождение роли польз-ля
+    global $pdo;
+    $sql = "SELECT role FROM users WHERE id=:id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute(["id" => $id]);
+    return $statement->fetch(PDO::FETCH_ASSOC);
+
+}
+
+function get_user_by_id($id)
+{
+    // поиск по id
+    global $pdo;
+
+    $sql = "SELECT * FROM info WHERE user_id=:id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute(["id" => $id]);
+    return $statement->fetch(PDO::FETCH_ASSOC);
+
 }
 
 function get_user_by_email($email)
@@ -100,12 +124,20 @@ function get_list_users()
     $statement = $pdo->prepare($sql);
     $statement->execute();
     return $statement->fetchAll(PDO::FETCH_ASSOC);
+
 }
 
 function edit_information($user_id, $name, $workplace, $phone, $address)
 {
     global $pdo;
-    $sql = "INSERT INTO info (user_id, name, workplace, phone, address) VALUES (:user_id, :name, :workplace, :phone, :address)";
+    if (isset($_SESSION["user_id"])) // user_id существует,тогда update
+    {
+        // echo "<br>update";
+        $sql = 'UPDATE info SET name = :name, workplace = :workplace, phone = :phone, address = :address  WHERE user_id = :user_id;';
+    } else {
+        // echo '<br>insert";
+        $sql = "INSERT INTO info (user_id, name, workplace, phone, address) VALUES (:user_id, :name, :workplace, :phone, :address)";
+    }
     $statement = $pdo->prepare($sql);
     $statement->execute([
         "user_id" => $user_id,
@@ -114,7 +146,8 @@ function edit_information($user_id, $name, $workplace, $phone, $address)
         "phone" => $phone,
         "address" => $address
     ]);
-
+    //var_dump($statement);
+    //die();
     return $pdo->lastInsertId();
 }
 

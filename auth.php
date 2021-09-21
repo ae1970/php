@@ -11,6 +11,6 @@ if (auth($email, $password)) {
 } else {
 
     redirect_to("page_login.php");
-    exit;
+    exit();
 }
 ?>

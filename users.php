@@ -1,12 +1,13 @@
 <?php
 session_start();
+
 $user = $_SESSION["user"];
 require_once ('functions.php');
 if (isset($_SESSION["user"])) {
     echo "Вы авторизованы как {$user['role']}";
 } else {
     header("Location: /page_login.php");
-    exit;
+    exit();
 }
 
 ?>
@@ -75,6 +76,7 @@ if (isset($_SESSION["user"])) {
             <div class="row" id="js-contacts">
                 <!--  get_list_users() получение списка пользователей -->
                 <?php $users = get_list_users();
+
                 foreach($users as $data) { ?>
                 <div class="col-xl-4">
                     <div id="c_1" class="card border shadow-0 mb-g shadow-sm-hover" data-filter-tags="<?php echo $data['name']; ?>">
@@ -92,28 +94,29 @@ if (isset($_SESSION["user"])) {
 
                                         <i class="fal fa-angle-down d-inline-block ml-1 fs-md"></i>
                                     </a>
-                                    <!-- Выводим меню правок для админа или только одно меню для авторизованного пользователя -->
-                                    <?php if(($user['role'] == "admin") or ($user['id'] == $data['id'])): ?>
+                                    <!-- Выводим меню правок у всех для админа или только меню для авторизованного пользователя -->
+                                    <?php if(($user['role'] == "admin") or ($user['id'] == $data['user_id'])) { ?>
+                                            <?php echo "<h4>" . $data['user_id'] . "</h4>" ?>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="edit?id=<?php echo $data['id']; ?>">
+                                        <a class="dropdown-item" href="edit.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-edit"></i>
                                         Редактировать</a>
-                                        <a class="dropdown-item" href="security?id=<?php echo $data['id']; ?>">
+                                        <a class="dropdown-item" href="security.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-lock"></i>
                                         Безопасность</a>
-                                        <a class="dropdown-item" href="status?id=<?php echo $data['id']; ?>">
+                                        <a class="dropdown-item" href="status.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-sun"></i>
                                         Установить статус</a>
-                                        <a class="dropdown-item" href="media?id=<?php echo $data['id']; ?>">
+                                        <a class="dropdown-item" href="media.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-camera"></i>
                                             Загрузить аватар
                                         </a>
-                                        <a href="delete?id=<?php echo $data['id']; ?>" class="dropdown-item" onclick="return confirm('are you sure?');">
+                                        <a href="delete.php?id=<?php echo $data['user_id']; ?>" class="dropdown-item" onclick="return confirm('are you sure?');">
                                             <i class="fa fa-window-close"></i>
                                             Удалить
                                         </a>
                                     </div>
-                                    <?php endif; ?>
+                                    <?php } ?>
                                     <span class="text-truncate text-truncate-xl"><?php echo $data['workplace']; ?></span>
                                 </div>
                                 <button class="js-expand-btn btn btn-sm btn-default d-none" data-toggle="collapse" data-target="#c_1 > .card-body + .card-body" aria-expanded="false">
