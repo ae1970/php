@@ -181,7 +181,7 @@ if ($_SESSION["user"] and $user['role'] == "admin") {
                                         </div>
                                     </div>
                                     <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                        <button type="submit" class="btn btn-success">Добавить</button>
+                                        <button type="submit" name="create" class="btn btn-success">Добавить</button>
                                     </div>
                                 </div>
                             </div>

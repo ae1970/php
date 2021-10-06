@@ -1,8 +1,39 @@
+<?php
+session_start();
+$user = $_SESSION["user"];
+(int) $user_id = $_GET['id'];
+include_once ('functions.php');
+echo "id редактируемого: " . $user_id; // id редактируемого пользователя
+echo "<br>session id: " . $user['id']; // id редактора
+echo "<br>Роль редактора: " . $user['role'];
+if (!isset($_SESSION["user"])) { // не авторизован!!!
+    header("Location: /page_login.php");
+    exit();
+}
+
+if ($user['role'] != 'admin') {
+    // echo "<br>Вы не админ!";
+        if ($user['id'] != $user_id) {
+           // и вы редактируете не свой аккаунт!
+            set_flash_message("danger", "Вы можете редактировать только свой аккаунт");
+            header("Location: /users.php");
+
+        }
+    //echo "<br>вы редактируете cвой аккаунт!";
+}
+//
+$security = get_security_by_id($user_id); // получаем данные редактируемого пользователя
+
+$_SESSION["email"] = $security['email'];
+$_SESSION["id"] = $user_id;
+$_SESSION["hash_password"] = $security['password'];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Безопаность</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -23,10 +54,10 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="page_login.html">Войти</a>
+                    <a class="nav-link" href="page_login.php">Войти</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Выйти</a>
+                    <a class="nav-link" href="destroy.php">Выйти</a>
                 </li>
             </ul>
         </div>
@@ -34,34 +65,40 @@
     <main id="js-page-content" role="main" class="page-content mt-3">
         <div class="subheader">
             <h1 class="subheader-title">
-                <i class='subheader-icon fal fa-sun'></i> Установить статус
+                <i class='subheader-icon fal fa-lock'></i> Безопасность
             </h1>
-
+            <?php display_flash_message("danger"); ?>
         </div>
-        <form action="">
+        <form action="edit_security.php" method="post">
             <div class="row">
                 <div class="col-xl-6">
                     <div id="panel-1" class="panel">
                         <div class="panel-container">
                             <div class="panel-hdr">
-                                <h2>Установка текущего статуса</h2>
+                                <h2>Обновление эл. адреса и пароля</h2>
                             </div>
                             <div class="panel-content">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <!-- status -->
-                                        <div class="form-group">
-                                            <label class="form-label" for="example-select">Выберите статус</label>
-                                            <select class="form-control" id="example-select">
-                                                <option>Онлайн</option>
-                                                <option>Отошел</option>
-                                                <option>Не беспокоить</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                        <button class="btn btn-warning">Set Status</button>
-                                    </div>
+                                <!-- email -->
+                                <div class="form-group">
+                                    <label class="form-label" for="simpleinput">Email</label>
+                                    <input type="text" id="simpleinput" name="email" class="form-control" value="<?php echo $security['email']; ?>">
+                                </div>
+
+                                <!-- password -->
+                                <div class="form-group">
+                                    <label class="form-label" for="simpleinput">Пароль</label>
+                                    <input type="password" id="simpleinput" name="password" class="form-control" value="<?php echo $security['password']; ?>">
+                                </div>
+
+                                <!-- password confirmation-->
+                                <div class="form-group">
+                                    <label class="form-label" for="simpleinput">Подтверждение пароля</label>
+                                    <input type="password" id="simpleinput" class="form-control">
+                                </div>
+
+
+                                <div class="col-md-12 mt-3 d-flex flex-row-reverse">
+                                    <button class="btn btn-warning">Изменить</button>
                                 </div>
                             </div>
                         </div>

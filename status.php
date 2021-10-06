@@ -1,8 +1,33 @@
+<?php
+session_start();
+require_once ('functions.php');
+$user = $_SESSION["user"];
+$user_id = $media_id = $_GET['id'];
+$_SESSION["media_id"] = $media_id;
+$status = get_status_media($media_id);
+// echo $status['status'];
+if (!isset($_SESSION["user"])) { // пользователь не авторизован!!!
+    set_flash_message("danger", "Вы не авторизованы! Авторизуйтесь!");
+    header("Location: /page_login.php");
+    exit();
+}
+
+if ($user['role'] != 'admin') {
+    // echo "<br>Вы не админ!";
+    if ($user['id'] != $user_id) {
+        // и вы редактируете не свой аккаунт!
+        set_flash_message("profile", "Вы можете редактировать только свой статус!");
+        header("Location: /users.php");
+
+    }
+    //echo "<br>вы редактируете cвой аккаунт!";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Установить статус</title>
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -26,7 +51,7 @@
                     <a class="nav-link" href="page_login.html">Войти</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Выйти</a>
+                    <a class="nav-link" href="destroy.php">Выйти</a>
                 </li>
             </ul>
         </div>
@@ -34,34 +59,38 @@
     <main id="js-page-content" role="main" class="page-content mt-3">
         <div class="subheader">
             <h1 class="subheader-title">
-                <i class='subheader-icon fal fa-image'></i> Загрузить аватар
+                <i class='subheader-icon fal fa-sun'></i> Установить статус
             </h1>
 
         </div>
-        <form action="">
+        <form action="edit_status.php" method="post">
             <div class="row">
                 <div class="col-xl-6">
                     <div id="panel-1" class="panel">
                         <div class="panel-container">
                             <div class="panel-hdr">
-                                <h2>Текущий аватар</h2>
+                                <h2>Установка текущего статуса</h2>
                             </div>
                             <div class="panel-content">
-                                <div class="form-group">
-                                    <img src="img/demo/authors/josh.png" alt="" class="img-responsive" width="200">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label" for="example-fileinput">Выберите аватар</label>
-                                    <input type="file" id="example-fileinput" class="form-control-file">
-                                </div>
-
-
-                                <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                    <button class="btn btn-warning">Загрузить</button>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <!-- status -->
+                                        <div class="form-group">
+                                            <label class="form-label" for="example-select">Выберите статус</label>
+                                            <select class="form-control" name = "status" id="example-select">
+                                                <option <?php if($status['status'] == 'online') echo " selected "?>value = "online">Онлайн</option>
+                                                <option <?php if($status['status'] == 'offline') echo " selected "?>value = "offline">Отошел</option>
+                                                <option <?php if($status['status'] == 'busy') echo " selected "?>value = "busy">Не беспокоить</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-3 d-flex flex-row-reverse">
+                                        <button class="btn btn-warning">Set Status</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

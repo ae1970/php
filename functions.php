@@ -20,10 +20,22 @@ function get_user_role($id)
 
 function get_user_by_id($id)
 {
-    // поиск по id
+    // поиск по id в таблице info
     global $pdo;
 
     $sql = "SELECT * FROM info WHERE user_id=:id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute(["id" => $id]);
+    return $statement->fetch(PDO::FETCH_ASSOC);
+
+}
+
+function get_security_by_id($id)
+{
+    // поиск по id в таблице users
+    global $pdo;
+
+    $sql = "SELECT * FROM users WHERE id=:id";
     $statement = $pdo->prepare($sql);
     $statement->execute(["id" => $id]);
     return $statement->fetch(PDO::FETCH_ASSOC);
@@ -38,6 +50,7 @@ function get_user_by_email($email)
     $statement = $pdo->prepare($sql);
     $statement->execute(["email" => $email]);
     return $statement->fetch(PDO::FETCH_ASSOC);
+
 }
 
 function add_user($email, $password)
@@ -61,8 +74,6 @@ function display_flash_message($name)
     };
 }
 
-;
-
 function display_flash_success($profile)
 {
     // Профиль успешно обновлен.
@@ -72,7 +83,6 @@ function display_flash_success($profile)
     }
 }
 
-;
 function set_flash_message($name, $message)
 {
     $_SESSION[$name] = $message;
@@ -83,7 +93,6 @@ function redirect_to($path)
     header("Location: /$path");
 }
 
-;
 
 function auth($email, $password)
 {
@@ -95,19 +104,45 @@ function auth($email, $password)
     $statement->execute(["email" => $email]);
     $user = $statement->fetch(PDO::FETCH_ASSOC);
     $hash = $user['password'];
+    //$hash = password_hash($password, PASSWORD_DEFAULT);
 
-    if (isset($user)) {
+    if (password_verify($password, $hash)) { // сравниваем пароли
+        // echo "Password is valid!";
+    } else {
+        set_flash_message("danger", "Логин или пароль - неверны!");
+        redirect_to("page_login.php");
+        exit();
+    }
+
+    if ($user) {
 
         $_SESSION["user"] = $user;
 
         return true;
 
     } else {
-        // Данных нет!
+        // Такой пользователь не найден!
         return false;
     }
 
 } // authorization function
+/**
+ * @param $media_id
+ * @return false|PDOStatement
+ */
+function get_status_media($media_id)
+{
+    global $pdo;
+    $sql = "SELECT * FROM `media` WHERE media_id=:media_id";
+
+    $statement = $pdo->prepare($sql);
+    $status = $statement->execute([
+        "media_id" => $media_id
+
+    ]);
+    $status = $statement->fetch(PDO::FETCH_ASSOC);
+    return $status;
+}
 
 function get_status($stat)
 { // Вывод текущего статуса пользователя
@@ -125,6 +160,17 @@ function get_list_users()
     $statement->execute();
     return $statement->fetchAll(PDO::FETCH_ASSOC);
 
+}
+
+function get_allinfo_user($id)
+{ // получаем данные пользователя из БД
+    $sql = "SELECT * FROM users JOIN info ON (info.user_id = users.id) JOIN media ON (media.media_id = users.id) WHERE users.id = :id";
+    global $pdo;
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "id" => $id
+    ]);
+    return $statement->fetch(PDO::FETCH_ASSOC);
 }
 
 function edit_information($user_id, $name, $workplace, $phone, $address)
@@ -180,6 +226,17 @@ function set_avatar($user_id, $filename)
     ]);
 }
 
+function update_avatar($user_id, $filename)
+{ // изменим имя файла аватара в БД
+    global $pdo;
+    $sql = 'UPDATE media SET avatar = :avatar WHERE media_id = :media_id;';
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        "media_id" => $user_id,
+        "avatar" => $filename
+    ]);
+}
+
 function set_status($user_id, $status)
 { // установим онлайн-статус пользователя
     global $pdo;
@@ -206,4 +263,37 @@ function add_social_links($user_id, $vk, $telegram, $insta)
 
 }
 
+function edit_credentials($user_id, $email, $password)
+{
+    global $pdo;
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "UPDATE `users` SET `email` = :email, `password` = :password WHERE `users`.`id` = :user_id";
+    $statement = $pdo->prepare($sql);
+    $statement->execute([
+        'email' => $email,
+        'password' => $hash,
+        'user_id' => $user_id
+    ]);
+
+}
+
+function delete($user_id)
+{
+global $pdo;
+    $stmt = $pdo->prepare( "DELETE FROM users WHERE id =:id" );
+    $stmt->bindParam(':id', $user_id);
+    $stmt->execute();
+    // unlink
+}
+
+function log_out()
+{
+    session_start();
+// Unset все переменные сессии.
+    $_SESSION = array();
+    include_once('functions.php');
+    session_destroy(); // мочим сессию!
+    header("Location: /page_register.php");
+    exit();
+}
 ?>

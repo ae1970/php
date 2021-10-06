@@ -40,7 +40,7 @@ if (isset($_SESSION["user"])) {
                         <a class="nav-link" href="page_login.html">Войти</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Выйти</a>
+                        <a class="nav-link" href="destroy.php">Выйти</a>
                     </li>
                 </ul>
             </div>
@@ -88,7 +88,7 @@ if (isset($_SESSION["user"])) {
                                 </span>
                                 <div class="info-card-text flex-1">
                                     <a href="javascript:void(0);" class="fs-xl text-truncate text-truncate-lg text-info" data-toggle="dropdown" aria-expanded="false">
-                                        <?php echo $data['name']; ?>
+                                        <?php echo $data['name']; ?><i class="fa fa-profile"></i><a class="" href="page_profile.php?id=<?php echo $data['user_id']; ?>">
 
                                         <i class="fal fas fa-cog fa-fw d-inline-block ml-1 fs-md"></i>
 
@@ -96,7 +96,7 @@ if (isset($_SESSION["user"])) {
                                     </a>
                                     <!-- Выводим меню правок у всех для админа или только меню для авторизованного пользователя -->
                                     <?php if(($user['role'] == "admin") or ($user['id'] == $data['user_id'])) { ?>
-
+                                            <?php echo "<h4>" . $data['user_id'] . "</h4>" ?>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="edit.php?id=<?php echo $data['user_id']; ?>">
                                             <i class="fa fa-edit"></i>

@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once('functions.php');
+require_once 'functions.php';
+if (!isset($_POST['create'])) exit(); // признак, что не было отправки формы
 $email = $_POST['email'];
 $password = $_POST['password'];
 global $pdo;

@@ -1,7 +1,7 @@
 <?php
 session_start();
+// Проверки
 require_once('functions.php');
-// проверки
 if (!$_GET['id']) {
     redirect_to("page_login.php");
     exit();
@@ -12,6 +12,8 @@ if (isset($_SESSION["user"])) {
     header("Location: /page_login.php");
     exit();
 }
+$id = $_GET['id'];
+(array) $users = get_allinfo_user($id);
 
 ?>
 
@@ -44,15 +46,17 @@ if (isset($_SESSION["user"])) {
                         <a class="nav-link" href="#">Войти</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Выйти</a>
+                        <a class="nav-link" href="destroy.php">Выйти</a>
                     </li>
                 </ul>
             </div>
         </nav>
-        <main id="js-page-content" role="main" class="page-content mt-3">
+        <?php  ?>
+
+          <main id="js-page-content" role="main" class="page-content mt-3">
             <div class="subheader">
                 <h1 class="subheader-title">
-                    <i class='subheader-icon fal fa-user'></i> Иван Иванов
+                    <i class='subheader-icon fal fa-user'></i> <?php echo $users['name'];?>
                 </h1>
             </div>
             <div class="row">
@@ -62,20 +66,21 @@ if (isset($_SESSION["user"])) {
                         <div class="row no-gutters row-grid">
                             <div class="col-12">
                                 <div class="d-flex flex-column align-items-center justify-content-center p-4">
-                                    <img src="img/demo/avatars/avatar-admin-lg.png" class="rounded-circle shadow-2 img-thumbnail" alt="">
+                                    <img src="img/demo/avatars/<?php echo $users['avatar'];?>" class="rounded-circle shadow-2 img-thumbnail" alt="">
                                     <h5 class="mb-0 fw-700 text-center mt-3">
-                                        Иван Иванов 
-                                        <small class="text-muted mb-0">Toronto, Canada</small>
+                                        <?php $users['name'];?>
+                                        <small class="text-muted mb-0"><?php echo $users['workplace'];?></small>
                                     </h5>
                                     <div class="mt-4 text-center demo">
                                         <a href="javascript:void(0);" class="fs-xl" style="color:#C13584">
-                                            <i class="fab fa-instagram"></i>
+
+                                            <a href="<?php echo $users['insta'];?>"><i class="fab fa-instagram"></i></a>
                                         </a>
                                         <a href="javascript:void(0);" class="fs-xl" style="color:#4680C2">
-                                            <i class="fab fa-vk"></i>
+                                            <a href="<?php echo $users['vk'];?>"><i class="fab fa-vk"></i></a>
                                         </a>
                                         <a href="javascript:void(0);" class="fs-xl" style="color:#0088cc">
-                                            <i class="fab fa-telegram"></i>
+                                            <a href="<?php echo $users['insta'];?>"><i class="fab fa-telegram"></i></a>
                                         </a>
                                     </div>
                                 </div>
@@ -83,11 +88,11 @@ if (isset($_SESSION["user"])) {
                             <div class="col-12">
                                 <div class="p-3 text-center">
                                     <a href="tel:+13174562564" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                        <i class="fas fa-mobile-alt text-muted mr-2"></i> +1 317-456-2564</a>
-                                    <a href="mailto:oliver.kopyov@marlin.ru" class="mt-1 d-block fs-sm fw-400 text-dark">
-                                        <i class="fas fa-mouse-pointer text-muted mr-2"></i> oliver.kopyov@marlin.ru</a>
+                                        <i class="fas fa-mobile-alt text-muted mr-2"></i><?php echo $users['phone'];?></a>
+                                    <a href="mailto:<?php echo $users['email'];?>" class="mt-1 d-block fs-sm fw-400 text-dark">
+                                        <i class="fas fa-mouse-pointer text-muted mr-2"></i><?php echo $users['email'];?></a>
                                     <address class="fs-sm fw-400 mt-4 text-muted">
-                                        <i class="fas fa-map-pin mr-2"></i> Восточные Королевства, Штормград 15
+                                        <i class="fas fa-map-pin mr-2"></i> <?php echo $users['address'];?>
                                     </address>
                                 </div>
                             </div>
