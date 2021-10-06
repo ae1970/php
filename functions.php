@@ -177,7 +177,7 @@ function edit_information($user_id, $name, $workplace, $phone, $address)
 {
     global $pdo;
     $sql = 'SELECT * FROM info WHERE user_id = :user_id;';
-    $statement= $pdo->prepare($sql);
+    $statement = $pdo->prepare($sql);
     $statement->execute(['user_id' => $user_id]);
 
     $user_data = $statement->fetch(PDO::FETCH_ASSOC);
@@ -283,8 +283,8 @@ function edit_credentials($user_id, $email, $password)
 
 function delete($user_id)
 {
-global $pdo;
-    $stmt = $pdo->prepare( "DELETE FROM users WHERE id =:id" );
+    global $pdo;
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id =:id");
     $stmt->bindParam(':id', $user_id);
     $stmt->execute();
     // unlink
@@ -300,4 +300,5 @@ function log_out()
     header("Location: /page_register.php");
     exit();
 }
+
 ?>
