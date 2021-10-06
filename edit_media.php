@@ -3,7 +3,7 @@ session_start();
 require_once('functions.php');
 if (!isset($_POST['submit'])) exit(); // признак, что не было отправки формы
 $user_id = $_SESSION["media_id"];
-if (!isset($_SESSION["user"])) { // пользователь не авторизован!!!
+if (!isset($_SESSION["user"])) { // пользователь не авторизован!!
     set_flash_message("danger", "Вы не авторизованы! Авторизуйтесь!");
     header("Location: /page_login.php");
     exit();
