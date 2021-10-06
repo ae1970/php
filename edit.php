@@ -61,7 +61,7 @@ if (($info['role'] == "admin") or ($user['user_id'] == $id)) {
                 <a class="nav-link" href="page_login.html">Войти</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Выйти</a>
+                <a class="nav-link" href="destroy.php">Выйти</a>
             </li>
         </ul>
     </div>

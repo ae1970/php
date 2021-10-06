@@ -176,12 +176,17 @@ function get_allinfo_user($id)
 function edit_information($user_id, $name, $workplace, $phone, $address)
 {
     global $pdo;
-    if (isset($_SESSION["user_id"])) // user_id существует,тогда update
+    $sql = 'SELECT * FROM info WHERE user_id = :user_id;';
+    $statement= $pdo->prepare($sql);
+    $statement->execute(['user_id' => $user_id]);
+
+    $user_data = $statement->fetch(PDO::FETCH_ASSOC);
+    if ($user_data['user_id']) // user_id существует,тогда update
     {
-        // echo "<br>update";
+
         $sql = 'UPDATE info SET name = :name, workplace = :workplace, phone = :phone, address = :address  WHERE user_id = :user_id;';
     } else {
-        // echo '<br>insert";
+        // нет user_id, значит вставка
         $sql = "INSERT INTO info (user_id, name, workplace, phone, address) VALUES (:user_id, :name, :workplace, :phone, :address)";
     }
     $statement = $pdo->prepare($sql);
@@ -192,8 +197,7 @@ function edit_information($user_id, $name, $workplace, $phone, $address)
         "phone" => $phone,
         "address" => $address
     ]);
-    //var_dump($statement);
-    //die();
+
     return $pdo->lastInsertId();
 }
 

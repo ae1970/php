@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once 'functions.php';
-if (!isset($_POST['create'])) exit(); // признак, что не было отправки формы
+require_once('functions.php');
+// if (!isset($_POST['create'])) exit(); // признак, что не было отправки формы
 $email = $_POST['email'];
 $password = $_POST['password'];
-global $pdo;
+
 $user = get_user_by_email($email);
 
 if (!empty($user)) {
@@ -13,7 +13,7 @@ if (!empty($user)) {
     exit();
 }
 if ($password) {
-    // set_flash_message("success", "Пользователь создан, добавьте информацию");
+
     $user_id = add_user($email, $password);
 
     // add to table info
@@ -21,6 +21,7 @@ if ($password) {
     $workplace = $_POST['workplace'];
     $phone = $_POST['phone'];
     $address = $_POST['address'];
+
     $status = $_POST['status'];
     $avatar = $_FILES['avatar'];
     $vk = $_POST['vk'];
